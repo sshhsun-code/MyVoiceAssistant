@@ -17,4 +17,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello World!" />
+    <Button
+        android:id="@+id/robot_chat"
+        android:layout_width="match_parent"
+        android:layout_marginTop="20dp"
+        android:layout_height="wrap_content"
+        android:text="图灵机器人聊天"/>
+    <Button
+        android:id="@+id/baidu_voice"
+        android:layout_width="match_parent"
+        android:layout_marginTop="70dp"
+        android:layout_height="wrap_content"
+        android:text="百度语音识别"/>
 </RelativeLayout>

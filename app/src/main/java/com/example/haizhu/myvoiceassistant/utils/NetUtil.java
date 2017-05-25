@@ -4,15 +4,12 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.example.haizhu.myvoiceassistant.AssistantApplication;
-
 /**
  * Created by sshunsun on 2017/5/22.
  */
 public class NetUtil {
 
-    public static boolean isNetOk() {
-        Context context = AssistantApplication.getInstance().getApplicationContext();
+    public static boolean isNetOk(Context context) {
         ConnectivityManager cm = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null)
             return false;
