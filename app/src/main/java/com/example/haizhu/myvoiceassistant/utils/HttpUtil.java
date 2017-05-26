@@ -39,7 +39,7 @@ public class HttpUtil {
         return URL_STR + "?key=" + API_KEY + "&info=" + msg + "&userid" + USER_ID;
     }
 
-    public static void sendMsg(String msg) throws Exception
+    public static Result sendMsg(String msg) throws Exception
     {
         String url = setParams(msg);
         String res = doGet(url);
@@ -60,6 +60,8 @@ public class HttpUtil {
                 result.setType(Result.TYPE_TEXT);
                 break;
         }
+        result.setText(result.getText());
+        return result;
     }
 
     /**

@@ -8,15 +8,17 @@
     <RelativeLayout
         android:id="@+id/robot_chat_title"
         android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:background="#cdcdcd" >
+        android:layout_height="80dp"
+        android:background="@color/safepay_default_bg" >
 
         <TextView
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content"
             android:gravity="center"
             android:text="智能助手"
-            android:textColor="#515151"
+            android:textColor="#FFF"
             android:textSize="20sp"
             android:textStyle="bold" />
     </RelativeLayout>
@@ -27,7 +29,7 @@
         android:layout_height="60dp"
         android:visibility="visible"
         android:layout_alignParentBottom="true"
-        android:background="@drawable/bottom_bar" >
+        android:background="@drawable/bottom_bar">
 
         <ImageView
             android:id="@+id/image_voice_in_text"
@@ -36,24 +38,23 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
             android:layout_centerVertical="true"
-            android:textColor="#fff"
             android:background="@drawable/voice_normal"/>
 
         <Button
             android:id="@+id/id_chat_send"
             android:layout_width="60dp"
-            android:layout_height="40dp"
+            android:layout_height="35dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
-            android:textColor="#2c2c2c"
+            android:textColor="#FFF"
             android:background="@drawable/chat_send_bt"
             android:onClick="sendMessage"
             android:text="发送" />
 
         <EditText
             android:id="@+id/id_chat_msg"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="10dp"
@@ -69,7 +70,7 @@
             android:layout_marginRight="10dp"
             android:layout_toStartOf="@id/id_chat_send"
             android:background="@drawable/robot_edit_bg_normal"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/voice_chat_bottom"
@@ -104,8 +105,9 @@
 
     <ListView
         android:id="@+id/id_chat_listView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="63dp"
         android:layout_below="@id/robot_chat_title"
         android:cacheColorHint="#0000"
@@ -113,5 +115,15 @@
         android:dividerHeight="5dp"
         android:scrollbarStyle="outsideOverlay" >
     </ListView>
+
+    <TextView
+        android:id="@+id/result_show"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:padding="5dp"
+        android:text="请求结果:"
+        android:layout_below="@id/robot_chat_title"/>
+
 
 </RelativeLayout>

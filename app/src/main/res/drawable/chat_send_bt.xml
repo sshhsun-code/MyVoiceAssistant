@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <corners android:radius="4dp"/>
-    <solid android:color="#cdcdcd" />
-    <stroke android:color="#777777" android:width="2dp"/>
+    <solid android:color="@color/safepay_default_bg" />
+    <stroke android:color="@color/safepay_default_bg" android:width="2dp"/>
 </shape>

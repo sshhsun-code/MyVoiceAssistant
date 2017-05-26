@@ -55,4 +55,14 @@ public class Result {
     public void setType(int type) {
         this.type = type;
     }
+
+    @Override
+    public String toString() {
+        return "Result{" +
+                "code=" + code +
+                ", text='" + text + '\'' +
+                ", url='" + url + '\'' +
+                ", type=" + type +
+                '}';
+    }
 }
