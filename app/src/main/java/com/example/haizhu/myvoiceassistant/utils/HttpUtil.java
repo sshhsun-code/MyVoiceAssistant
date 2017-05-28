@@ -36,7 +36,7 @@ public class HttpUtil {
         {
             e.printStackTrace();
         }
-        return URL_STR + "?key=" + API_KEY + "&info=" + msg + "&userid" + USER_ID;
+        return URL_STR + "?key=" + API_KEY + "&info=" + msg + "&userid=" + USER_ID;
     }
 
     public static Result sendMsg(String msg) throws Exception

@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -78,12 +79,21 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         image_voice = (TextView) findViewById(R.id.image_voice);
         image_keyboard = (ImageView) findViewById(R.id.image_keyboard);
 
+        text_chat_bottom.setVisibility(View.VISIBLE);
+        voice_chat_bottom.setVisibility(View.GONE);
+
         result_show = (TextView) findViewById(R.id.result_show);
         image_voice_in_text.setOnClickListener(this);
         id_chat_send.setOnClickListener(this);
         id_chat_msg.setOnClickListener(this);
-        image_voice.setOnClickListener(this);
         image_keyboard.setOnClickListener(this);
+
+        image_voice.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
     }
 
     @Override
@@ -104,21 +114,31 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 
     }
 
+    /**
+     * 更新底部layout View
+     * @param isVoiceShow
+     */
+    private void refreshBottomLayout(boolean isVoiceShow) {
+        if (text_chat_bottom == null || voice_chat_bottom == null) {
+            return;
+        }
+        text_chat_bottom.setVisibility(isVoiceShow ? View.GONE : View.VISIBLE);
+        voice_chat_bottom.setVisibility(isVoiceShow ? View.VISIBLE : View.GONE);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.text_chat_bottom:
+            case R.id.image_voice_in_text:
+                refreshBottomLayout(true);
                 break;
             case R.id.id_chat_send:
                 if (!TextUtils.isEmpty(id_chat_msg.getText())) {
                     TruingDataHandler.requestTruingAnswer(id_chat_msg.getText().toString());
                 }
                 break;
-            case R.id.id_chat_msg:
-                break;
-            case R.id.image_voice:
-                break;
             case R.id.image_keyboard:
+                refreshBottomLayout(false);
                 break;
         }
     }

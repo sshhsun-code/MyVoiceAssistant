@@ -38,7 +38,7 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
             android:layout_centerVertical="true"
-            android:background="@drawable/voice_normal"/>
+            android:background="@drawable/voice_switch_bg"/>
 
         <Button
             android:id="@+id/id_chat_send"
@@ -48,7 +48,7 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:textColor="#FFF"
-            android:background="@drawable/chat_send_bt"
+            android:background="@drawable/msg_send_bg"
             android:onClick="sendMessage"
             android:text="发送" />
 
@@ -62,15 +62,15 @@
             android:text="你好你好你好你好你好"
             android:gravity="bottom"
             android:paddingRight="4dp"
-            android:paddingBottom="5dp"
+            android:paddingBottom="7dp"
             android:paddingTop="10dp"
             android:layout_marginBottom="10dp"
             android:layout_alignParentBottom="true"
             android:layout_toEndOf="@id/image_voice_in_text"
             android:layout_marginRight="10dp"
             android:layout_toStartOf="@id/id_chat_send"
-            android:background="@drawable/robot_edit_bg_normal"
-            android:textSize="18sp" />
+            android:background="@drawable/msg_edit_bg"
+            android:textSize="18sp"/>
     </RelativeLayout>
     <RelativeLayout
         android:id="@+id/voice_chat_bottom"
@@ -83,18 +83,18 @@
         <TextView
             android:id="@+id/image_voice"
             android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_height="43dp"
             android:layout_centerInParent="true"
             android:text="按住 说话"
             android:gravity="center"
             android:textColor="#515151"
-            android:textSize="20sp"
-            android:background="@drawable/robot_text_bg_normal"/>
+            android:textSize="18sp"
+            android:background="@drawable/msg_edit_bg"/>
 
         <ImageView
             android:id="@+id/image_keyboard"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
             android:layout_centerVertical="true"
