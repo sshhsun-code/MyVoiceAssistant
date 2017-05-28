@@ -12,12 +12,17 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.haizhu.myvoiceassistant.R;
+import com.example.haizhu.myvoiceassistant.adapter.RobotChatAdapter;
 import com.example.haizhu.myvoiceassistant.bean.Result;
 import com.example.haizhu.myvoiceassistant.datahandler.TruingDataHandler;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sshunsun on 2017/5/26.
@@ -34,6 +39,10 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private ImageView image_keyboard;
 
     private TextView result_show;
+    private ListView id_chat_listView;
+
+    private List<Result> resultList = new ArrayList<>();
+    private RobotChatAdapter chatAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +74,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 
     private void iniData() {
         TruingDataHandler.setListener(this);
+        chatAdapter = new RobotChatAdapter(getApplicationContext(), resultList);
     }
 
     private void initView() {
@@ -78,6 +88,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         voice_chat_bottom = (RelativeLayout) findViewById(R.id.voice_chat_bottom);
         image_voice = (TextView) findViewById(R.id.image_voice);
         image_keyboard = (ImageView) findViewById(R.id.image_keyboard);
+
+        id_chat_listView = (ListView) findViewById(R.id.id_chat_listView);
 
         text_chat_bottom.setVisibility(View.VISIBLE);
         voice_chat_bottom.setVisibility(View.GONE);
@@ -97,13 +109,18 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        id_chat_listView.setAdapter(chatAdapter);
+    }
+
+    @Override
     public void onDataFinished(final Result result) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if (result != null) {
-                    result_show.append("\n");
-                    result_show.append(result.toString());
+                   addChatItem(result);
                 }
             }
         });
@@ -135,11 +152,34 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
             case R.id.id_chat_send:
                 if (!TextUtils.isEmpty(id_chat_msg.getText())) {
                     TruingDataHandler.requestTruingAnswer(id_chat_msg.getText().toString());
+                    addChatItem(id_chat_msg.getText().toString());
                 }
                 break;
             case R.id.image_keyboard:
                 refreshBottomLayout(false);
                 break;
+        }
+    }
+
+    private void addChatItem(String msg) {
+        Result my = new Result();
+        my.setType(Result.TYPE_MY);
+        my.setText(msg);
+        resultList.add(my);
+        try {
+            chatAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addChatItem(Result result) {
+        resultList.add(result);
+        try {
+            chatAdapter.notifyDataSetChanged();
+            id_chat_listView.smoothScrollToPosition(resultList.size());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

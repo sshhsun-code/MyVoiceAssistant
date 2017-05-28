@@ -105,9 +105,9 @@
 
     <ListView
         android:id="@+id/id_chat_listView"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginBottom="63dp"
         android:layout_below="@id/robot_chat_title"
         android:cacheColorHint="#0000"
@@ -119,6 +119,9 @@
     <TextView
         android:id="@+id/result_show"
         android:layout_width="match_parent"
+        android:paddingLeft="2dp"
+        android:visibility="gone"
+        android:paddingRight="2dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:padding="5dp"

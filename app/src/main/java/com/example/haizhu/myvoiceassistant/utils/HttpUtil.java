@@ -39,6 +39,12 @@ public class HttpUtil {
         return URL_STR + "?key=" + API_KEY + "&info=" + msg + "&userid=" + USER_ID;
     }
 
+    /**
+     * 发送请求，得到回复消息
+     * @param msg
+     * @return
+     * @throws Exception
+     */
     public static Result sendMsg(String msg) throws Exception
     {
         String url = setParams(msg);

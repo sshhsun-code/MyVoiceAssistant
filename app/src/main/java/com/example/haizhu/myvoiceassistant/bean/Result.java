@@ -6,9 +6,10 @@ package com.example.haizhu.myvoiceassistant.bean;
  */
 
 public class Result {
-    public static final int TYPE_TEXT = 1;//纯文本类型
-    public static final int TYPE_URL = 2;//url类型
-    public static final int TYPE_NEWS = 3;//新闻类型
+    public static final int TYPE_MY = 0;   //自己的请求类型
+    public static final int TYPE_TEXT = 1; //纯文本类型
+    public static final int TYPE_URL = 2;  //url类型
+    public static final int TYPE_NEWS = 3; //新闻类型
     private int code;
     private String text;
     private String url;
