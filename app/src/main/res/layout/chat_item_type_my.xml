@@ -27,9 +27,10 @@
             <TextView
                 android:id="@+id/type_me_name"
                 android:layout_width="wrap_content"
+                android:textColor="#dcbcc7"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="我"
+                android:text="Me"
                 android:textSize="18sp" />
         </LinearLayout>
 

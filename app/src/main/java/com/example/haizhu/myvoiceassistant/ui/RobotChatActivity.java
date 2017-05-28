@@ -1,9 +1,12 @@
 package com.example.haizhu.myvoiceassistant.ui;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,6 +23,7 @@ import com.example.haizhu.myvoiceassistant.R;
 import com.example.haizhu.myvoiceassistant.adapter.RobotChatAdapter;
 import com.example.haizhu.myvoiceassistant.bean.Result;
 import com.example.haizhu.myvoiceassistant.datahandler.TruingDataHandler;
+import com.example.haizhu.myvoiceassistant.utils.HttpUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +48,10 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private List<Result> resultList = new ArrayList<>();
     private RobotChatAdapter chatAdapter;
 
+    private Handler mhandler;
+
+    private String httpUrl = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +61,24 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 //        setSoftInputMode();
         initView();
         iniData();
+
+        mhandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+                super.handleMessage(msg);
+                switch (msg.what) {
+                    case 1:
+                        boolean isHttpUrl = (boolean) msg.obj;
+                        if (isHttpUrl) {
+                            Intent intent = new Intent(RobotChatActivity.this, WebViewActivity.class);
+                            intent.putExtra(WebViewActivity.STR_EXTRA,httpUrl);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                        break;
+                }
+            }
+        };
     }
 
     private void setStatusBarTranslate() {
@@ -82,8 +108,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         image_voice_in_text = (ImageView) findViewById(R.id.image_voice_in_text);
         id_chat_send = (Button) findViewById(R.id.id_chat_send);
         id_chat_msg = (EditText) findViewById(R.id.id_chat_msg);
+        id_chat_msg.setText("");
         id_chat_msg.setSelection(id_chat_msg.getText().length());
-
 
         voice_chat_bottom = (RelativeLayout) findViewById(R.id.voice_chat_bottom);
         image_voice = (TextView) findViewById(R.id.image_voice);
@@ -122,6 +148,10 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                 if (result != null) {
                    addChatItem(result);
                 }
+                httpUrl = result.getUrl();
+                if (!TextUtils.isEmpty(httpUrl)) { //有额外的连接内容
+                    HttpUtil.checkURL(httpUrl, mhandler);
+                }
             }
         });
     }
@@ -154,12 +184,26 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                     TruingDataHandler.requestTruingAnswer(id_chat_msg.getText().toString());
                     addChatItem(id_chat_msg.getText().toString());
                 }
+                id_chat_msg.setText("");
                 break;
             case R.id.image_keyboard:
                 refreshBottomLayout(false);
                 break;
         }
     }
+
+//    private void HandleInputMethod(boolean isShow) {
+//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+//        if (isShow) {
+//
+//        } else {
+//            if (imm.isActive())
+//            {
+//                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,
+//                        InputMethodManager.HIDE_NOT_ALWAYS);
+//            }
+//        }
+//    }
 
     private void addChatItem(String msg) {
         Result my = new Result();

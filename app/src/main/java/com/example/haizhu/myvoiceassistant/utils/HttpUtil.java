@@ -1,5 +1,8 @@
 package com.example.haizhu.myvoiceassistant.utils;
 
+import android.os.Handler;
+import android.os.Message;
+
 import com.example.haizhu.myvoiceassistant.bean.Result;
 import com.google.gson.Gson;
 
@@ -8,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
@@ -130,5 +134,34 @@ public class HttpUtil {
             }
             conn.disconnect();
         }
+    }
+
+
+    public static void checkURL(final String url, final Handler handler){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean value=false;
+                try {
+                    HttpURLConnection conn=(HttpURLConnection)new URL(url).openConnection();
+                    int code=conn.getResponseCode();
+                    System.out.println(">>>>>>>>>>>>>>>> "+code+" <<<<<<<<<<<<<<<<<<");
+                    if(code!=200){
+                        value=false;
+                    }else{
+                        value=true;
+                    }
+                } catch (MalformedURLException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                Message message = handler.obtainMessage(1);
+                message.obj = value;
+                handler.sendMessage(message);
+            }
+        }).start();
     }
 }

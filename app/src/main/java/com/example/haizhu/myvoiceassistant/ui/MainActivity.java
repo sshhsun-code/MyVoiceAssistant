@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements NetStateReceiver.NetStateL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.baidu_voice:
-                Intent intent = new Intent(this, BaiduVoiceActivity.class);
+                Intent intent = new Intent(this, WebViewActivity.class);
                 startActivity(intent);
                 break;
             case R.id.robot_chat:
