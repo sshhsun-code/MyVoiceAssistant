@@ -4,6 +4,12 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +17,11 @@
         android:label="@string/app_name_cn"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data android:name="com.baidu.speech.APP_ID" android:value="9684039"/>
+        <meta-data android:name="com.baidu.speech.API_KEY" android:value="codjG0guGF8ik0tGXo7K8x5i"/>
+        <meta-data android:name="com.baidu.speech.SECRET_KEY" android:value="ab5414150c57a015020e767ef3291dcb"/>
+
         <activity
             android:name=".ui.MainActivity"
             android:label="@string/app_name_cn"

@@ -158,7 +158,7 @@ public class HttpUtil {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-                Message message = handler.obtainMessage(1);
+                Message message = handler.obtainMessage(5);
                 message.obj = value;
                 handler.sendMessage(message);
             }

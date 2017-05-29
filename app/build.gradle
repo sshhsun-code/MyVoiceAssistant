@@ -28,4 +28,5 @@ dependencies {
     compile 'com.android.support:design:24.1.1'
     testCompile 'junit:junit:4.12'
     compile files('libs/gson-2.4 .jar')
+    compile files('libs/VoiceRecognition-2.2.1027.jar')
 }

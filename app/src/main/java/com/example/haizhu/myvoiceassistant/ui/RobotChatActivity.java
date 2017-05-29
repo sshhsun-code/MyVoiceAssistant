@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.example.haizhu.myvoiceassistant.R;
 import com.example.haizhu.myvoiceassistant.adapter.RobotChatAdapter;
 import com.example.haizhu.myvoiceassistant.bean.Result;
+import com.example.haizhu.myvoiceassistant.datahandler.BaiduRecognitioner;
 import com.example.haizhu.myvoiceassistant.datahandler.TruingDataHandler;
 import com.example.haizhu.myvoiceassistant.utils.HttpUtil;
 
@@ -52,6 +53,10 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 
     private String httpUrl = "";
 
+    public static final int RECOGNIZE_SUCESS = 1;
+    public static final int RECOGNIZE_ERROR = 2;
+    public static final int RMSCHANGED = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +72,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
                 switch (msg.what) {
-                    case 1:
+                    case 5:
                         boolean isHttpUrl = (boolean) msg.obj;
                         if (isHttpUrl) {
                             Intent intent = new Intent(RobotChatActivity.this, WebViewActivity.class);
@@ -75,6 +80,15 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
+                        break;
+                    case RECOGNIZE_SUCESS:
+
+                        break;
+                    case RECOGNIZE_ERROR:
+
+                        break;
+                    case RMSCHANGED:
+
                         break;
                 }
             }
@@ -101,6 +115,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private void iniData() {
         TruingDataHandler.setListener(this);
         chatAdapter = new RobotChatAdapter(getApplicationContext(), resultList);
+        BaiduRecognitioner.initData(this);
     }
 
     private void initView() {
