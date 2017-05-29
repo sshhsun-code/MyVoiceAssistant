@@ -120,11 +120,12 @@
         android:id="@+id/result_show"
         android:layout_width="match_parent"
         android:paddingLeft="2dp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:paddingRight="2dp"
         android:layout_height="wrap_content"
         android:textSize="18sp"
         android:padding="5dp"
+        android:textColor="#000"
         android:text="请求结果:"
         android:layout_below="@id/robot_chat_title"/>
 

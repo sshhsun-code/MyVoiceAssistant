@@ -18,9 +18,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <meta-data android:name="com.baidu.speech.APP_ID" android:value="9684039"/>
-        <meta-data android:name="com.baidu.speech.API_KEY" android:value="codjG0guGF8ik0tGXo7K8x5i"/>
-        <meta-data android:name="com.baidu.speech.SECRET_KEY" android:value="ab5414150c57a015020e767ef3291dcb"/>
+        <meta-data android:name="com.baidu.speech.APP_ID" android:value="9683489"/>
+        <meta-data android:name="com.baidu.speech.API_KEY" android:value="DnBhRg9PvmNSs0a6OD4BHLAk"/>
+        <meta-data android:name="com.baidu.speech.SECRET_KEY" android:value="8492ef7b1b435bce2b98e41c1023e67b"/>
 
         <activity
             android:name=".ui.MainActivity"
@@ -72,6 +72,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.baidu.speech.VoiceRecognitionService"
+            android:exported="false" />
     </application>
 
 </manifest>
