@@ -7,7 +7,7 @@ import android.app.Application;
  */
 public class AssistantApplication extends Application {
 
-    private static AssistantApplication application = null;
+    private static AssistantApplication application;
 
     @Override
     public void onCreate() {

@@ -31,6 +31,7 @@ import com.baidu.speech.VoiceRecognitionService;
 import com.example.haizhu.myvoiceassistant.R;
 import com.example.haizhu.myvoiceassistant.adapter.RobotChatAdapter;
 import com.example.haizhu.myvoiceassistant.bean.Result;
+import com.example.haizhu.myvoiceassistant.datahandler.ResultsAnalysisManager;
 import com.example.haizhu.myvoiceassistant.datahandler.TruingDataHandler;
 import com.example.haizhu.myvoiceassistant.global.Constant;
 import com.example.haizhu.myvoiceassistant.utils.HttpUtil;
@@ -438,6 +439,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                 Message message = mhandler.obtainMessage(RECOGNIZE_SUCESS);
                 message.obj = results_nlu_json;
                 mhandler.sendMessage(message);  //主界面UI通信
+                ResultsAnalysisManager.analyseResult(results_nlu_json);
                 print("result_nlu=\n" + results_nlu_json);
                 try {
                     print("origin_result=\n" + new JSONObject(json_res).toString(4));
