@@ -261,24 +261,32 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 //    }
 
     public static void addChatItem(String msg) {
+        if (msg.isEmpty()) {
+            return;
+        }
         Result my = new Result();
         my.setType(Result.TYPE_MY);
         my.setText(msg);
         resultList.add(my);
         try {
             chatAdapter.notifyDataSetChanged();
+            id_chat_listView.smoothScrollToPosition(resultList.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public static void addChatItem(String msg,boolean isFrom) {
+        if (msg.isEmpty()) {
+            return;
+        }
         Result my = new Result();
         my.setType(Result.TYPE_TEXT);
         my.setText(msg);
         resultList.add(my);
         try {
             chatAdapter.notifyDataSetChanged();
+            id_chat_listView.smoothScrollToPosition(resultList.size());
         } catch (Exception e) {
             e.printStackTrace();
         }

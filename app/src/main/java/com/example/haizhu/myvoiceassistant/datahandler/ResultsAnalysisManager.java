@@ -21,6 +21,7 @@ import android.util.Log;
 import com.example.haizhu.myvoiceassistant.AssistantApplication;
 import com.example.haizhu.myvoiceassistant.bean.BaiduIntent;
 import com.example.haizhu.myvoiceassistant.bean.VoiceBean;
+import com.example.haizhu.myvoiceassistant.ui.RobotChatActivity;
 import com.example.haizhu.myvoiceassistant.utils.AppNameUtils;
 import com.example.haizhu.myvoiceassistant.utils.common;
 import com.google.gson.Gson;
@@ -61,10 +62,14 @@ public class ResultsAnalysisManager {
         mcontext = AssistantApplication.getInstance();
         VoiceBean voiceBean = gson.fromJson(result, VoiceBean.class);
         Log.d(TAG, "------" + voiceBean);
-        String raw_text = voiceBean.getRaw_text();
+        final String raw_text = voiceBean.getRaw_text();
+        RobotChatActivity.addChatItem(raw_text);
         List<BaiduIntent> intentList = voiceBean.getResults();
         if (intentList.size() == 0) {
-            //@Todo 直接将raw_text发送图灵机器人并return
+            if (!raw_text.isEmpty()) {
+                TruingDataHandler.requestTruingAnswer(raw_text);
+                return;
+            }
             return;
         }
         BaiduIntent baiduIntent = voiceBean.getResults().get(0);
@@ -76,16 +81,17 @@ public class ResultsAnalysisManager {
             analyseIntent(domain, intent, map, new HandlerCallBack() {
                 @Override
                 public void success() {
-
+                    RobotChatActivity.addChatItem("好的，马上"+raw_text,true);
                 }
 
                 @Override
                 public void error(String error) {
-
+                    RobotChatActivity.addChatItem(error,true);
                 }
             }); //分析意图，准备离线场景的操作
         } else {
-            //@Todo 直接将raw_text发送图灵机器人并return
+            TruingDataHandler.requestTruingAnswer(raw_text);
+            return;
         }
     }
 
@@ -95,9 +101,9 @@ public class ResultsAnalysisManager {
      * @param intent
      * @param map
      */
-    private static void analyseIntent(String domain, String intent, LinkedTreeMap map,HandlerCallBack callBack) {
+    private static void analyseIntent(String domain, final String intent, LinkedTreeMap map,HandlerCallBack callBack) {
         if (domain.equals("setting")) {  //打开系统设置
-            if (!handleSettingIntent(intent, map)) {
+            if (!handleSettingIntent(intent, map, callBack)) {
                 Intent intent1 = new Intent();
                 intent1.setClassName("com.android.settings", "com.android.settings.Settings");
                 intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -105,23 +111,42 @@ public class ResultsAnalysisManager {
             }
         } else if (domain.equals("app")) {  //打开应用
             String appName = (String) map.get("appname");
-            String pkgName = AppNameUtils.getpkgName(appName);
+            final String pkgName = AppNameUtils.getpkgName(appName);
             if (!TextUtils.isEmpty(pkgName)) {
-                Intent intent1 = common.getAppIntentWithPackageName(mcontext, pkgName);
-                common.startActivity(mcontext, intent1);
+                callBack.success();
+                mhandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (intent.contains("uninstall")) {
+                            Intent intent2 = new Intent();
+                            intent2.setAction(Intent.ACTION_DELETE);
+                            intent2.setData(Uri.parse("package:"+pkgName));
+                            intent2.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            mcontext.startActivity(intent2);
+                        } else {
+                        Intent intent1 = common.getAppIntentWithPackageName(mcontext, pkgName);
+                        common.startActivity(mcontext, intent1);
+                        }
+                    }
+                },3000);
+            } else {
+                callBack.error("无法找到:"+appName);
             }
         } else if (domain.equals("telephone")) { //打电话
             String name = (String) map.get("name");
             getNumberAndCall(name, callBack);
         } else if (domain.equals("message")) {
             ArrayList<String> names = (ArrayList<String>) map.get("name");
+            if (names == null || names.isEmpty()) {
+                callBack.error("没有指定联系人");
+            }
             String name = names.get(0);
             String msgbody = (String) map.get("msgbody");
             getNumberAndSend(name, msgbody,callBack);
         }
     }
 
-    private static boolean handleSettingIntent(String intent, LinkedTreeMap map) {
+    private static boolean handleSettingIntent(String intent, LinkedTreeMap map, HandlerCallBack callBack) {
         if (intent.equals("set")) {
             String settingtype = (String) map.get("settingtype");
             if (settingtype.contains("wifi")) {
@@ -136,6 +161,7 @@ public class ResultsAnalysisManager {
                         wifiManager.setWifiEnabled(false);
                     }
                 }
+                callBack.success();
                 return true;
             } else if (settingtype.contains("bluetooth")) {
                 BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -149,6 +175,7 @@ public class ResultsAnalysisManager {
                         bluetoothAdapter.disable();
                     }
                 }
+                callBack.success();
                 return true;
             } else if (settingtype.contains("data")) {
                 if (settingtype.equals("data_on")) { //打开data
@@ -156,8 +183,10 @@ public class ResultsAnalysisManager {
                 } else {  //关闭data
                     setMobileData(mcontext.getApplicationContext(), false);
                 }
+                callBack.success();
                 return true;
             } else {
+                callBack.error("无法识别指令");
                 return false;
             }
         }
@@ -208,6 +237,8 @@ public class ResultsAnalysisManager {
                         callBack.success();
                         mcontext.startActivity(intent);
                         return;
+                    } else {
+                        callBack.error("没有电话权限");
                     }
                 }
             }
