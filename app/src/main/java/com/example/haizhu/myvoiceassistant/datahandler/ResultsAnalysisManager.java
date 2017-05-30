@@ -137,6 +137,7 @@ public class ResultsAnalysisManager {
             if (name == null || name.isEmpty()) {  //单纯的数字序列不处理，交给图灵
                 String number = (String) map.get("number");
                 TruingDataHandler.requestTruingAnswer(number);
+                return;
             }
             getNumberAndCall(name, callBack);
         } else if (domain.equals("message")) {

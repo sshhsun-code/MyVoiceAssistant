@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:background="#e6e6e6"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/webview_top"
+        android:layout_width="match_parent"
+        android:layout_height="210dp"
+        android:background="@color/safepay_default_bg" >
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="3dp"
+            android:src="@drawable/girl4"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFF"
+            android:textSize="20sp"
+            android:layout_marginBottom="35dp"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:text="康海珠"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#515151"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_below="@id/webview_top"
+        android:layout_centerHorizontal="true"
+        android:layout_width="300dp"
+        android:background="#fff"
+        android:layout_marginBottom="30dp"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/help_item"
+        android:background="#fff"
+        android:layout_height="wrap_content"
+        android:paddingTop="5dp"
+        android:paddingLeft="5dp"
+        android:orientation="vertical"
+        android:layout_width="300dp">
+        <RelativeLayout
+            android:layout_width="290dp"
+            android:paddingTop="10dp"
+            android:gravity="left"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/setting_icon"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:layout_marginLeft="10dp"
+                android:layout_centerVertical="true"
+                android:src="@drawable/voice_setting"/>
+            <TextView
+                android:layout_toRightOf="@id/setting_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="15dp"
+                android:text="语音设置"/>
+            <View
+                android:layout_width="220dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="60dp"
+                android:layout_alignParentRight="true"
+                android:background="#515151"/>
+        </RelativeLayout>
+    </LinearLayout>
+    </ScrollView>
+
+</RelativeLayout>

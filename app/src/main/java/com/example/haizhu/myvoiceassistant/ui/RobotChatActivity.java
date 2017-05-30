@@ -12,8 +12,10 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
+import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +50,8 @@ import java.util.List;
  */
 public class RobotChatActivity extends Activity implements View.OnClickListener, TruingDataHandler.QueryListener{
 
+    private DrawerLayout drawer_layout;
+    private View left_drawer;
     private RelativeLayout text_chat_bottom;
     private ImageView image_voice_in_text;
     private Button id_chat_send;
@@ -56,6 +60,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private RelativeLayout voice_chat_bottom;
     private TextView image_voice;
     private ImageView image_keyboard;
+
+    private ImageView top_more_item;
 
     private TextView result_show;
     private TextView robot_top_text;
@@ -70,6 +76,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private static RobotChatAdapter chatAdapter;
 
     private Handler mhandler;
+
+    private DrawerLayout.DrawerListener listener;
 
     private static RecognitionListener recognitionListener;
     private static SpeechRecognizer speechRecognizer;
@@ -115,8 +123,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                 }
             }
         };
-        initView();
         iniData();
+        initView();
     }
 
     private void setStatusBarTranslate() {
@@ -142,15 +150,44 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         initListener();
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getApplicationContext(), new ComponentName(this, VoiceRecognitionService.class));
         speechRecognizer.setRecognitionListener(recognitionListener);
+
+        listener = new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        };
     }
 
     private void initView() {
+
+        left_drawer = findViewById(R.id.left_drawer);
+        left_drawer.setOnClickListener(this);
+        drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer_layout.addDrawerListener(listener);
+
         speechTips = View.inflate(this, R.layout.bd_asr_popup_speech,null);
         speechWave = speechTips.findViewById(R.id.wave);
         speechTips.setVisibility(View.GONE);
         addContentView(speechTips, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         text_chat_bottom = (RelativeLayout) findViewById(R.id.text_chat_bottom);
         image_voice_in_text = (ImageView) findViewById(R.id.image_voice_in_text);
+        top_more_item = (ImageView) findViewById(R.id.top_more_item);
         id_chat_send = (Button) findViewById(R.id.id_chat_send);
         id_chat_msg = (EditText) findViewById(R.id.id_chat_msg);
         id_chat_msg.setText("");
@@ -174,6 +211,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         id_chat_msg.setOnClickListener(this);
         image_keyboard.setOnClickListener(this);
         image_help.setOnClickListener(this);
+        top_more_item.setOnClickListener(this);
 
         image_voice.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -265,6 +303,9 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
             case R.id.image_help:
                 Intent intent = new Intent(RobotChatActivity.this, HelpActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.top_more_item:
+                drawer_layout.openDrawer(Gravity.LEFT);
                 break;
         }
     }
