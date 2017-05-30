@@ -2,4 +2,56 @@
     <string name="app_name">MyVoiceAssistant</string>
     <string name="app_name_cn">语音助手</string>
     <string name="action_settings">Settings</string>
+
+    <string-array name="languages">
+        <item>c语言</item>
+        <item>java </item>
+        <item>php</item>
+        <item>xml</item>
+        <item>html</item>
+    </string-array>
+
+    <string-array name="speaker">
+        <item>女声</item>
+        <item>男声</item>
+    </string-array>
+
+    <string-array name="volume">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="speed">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="pit">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
 </resources>

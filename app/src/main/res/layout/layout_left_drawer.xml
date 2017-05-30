@@ -49,6 +49,7 @@
         android:paddingTop="5dp"
         android:paddingLeft="5dp"
         android:orientation="vertical"
+        android:layout_marginBottom="10dp"
         android:layout_width="300dp">
         <RelativeLayout
             android:layout_width="290dp"
@@ -68,6 +69,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#000"
                 android:textSize="18sp"
+                android:textStyle="bold"
                 android:layout_centerVertical="true"
                 android:layout_marginTop="5dp"
                 android:layout_marginLeft="15dp"
@@ -78,6 +80,122 @@
                 android:layout_marginTop="60dp"
                 android:layout_alignParentRight="true"
                 android:background="#515151"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="290dp"
+            android:paddingTop="0dp"
+            android:gravity="left"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/speak_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/safepay_default_bg"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="25dp"
+                android:text="声音设置"/>
+            <Spinner
+                android:layout_toRightOf="@id/speak_setting"
+                android:id="@+id/spinner1"
+                android:layout_marginLeft="20dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/robot_edit_bg_pressed"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
+                android:entries="@array/speaker"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="290dp"
+            android:paddingTop="0dp"
+            android:gravity="left"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/volume"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/safepay_default_bg"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="25dp"
+                android:text="音量设置"/>
+            <Spinner
+                android:layout_toRightOf="@id/volume"
+                android:id="@+id/spinner2"
+                android:layout_marginLeft="20dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/robot_edit_bg_pressed"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
+                android:entries="@array/volume"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="290dp"
+            android:paddingTop="0dp"
+            android:gravity="left"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/speed_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@color/safepay_default_bg"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="25dp"
+                android:text="语速设置"/>
+            <Spinner
+                android:layout_toRightOf="@id/speed_setting"
+                android:id="@+id/spinner3"
+                android:layout_marginLeft="20dp"
+                android:layout_centerVertical="true"
+                android:background="@drawable/robot_edit_bg_pressed"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
+                android:entries="@array/speed"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="290dp"
+            android:paddingTop="0dp"
+            android:gravity="left"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/pit_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/safepay_default_bg"
+                android:textSize="18sp"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="25dp"
+                android:text="语调设置"/>
+            <Spinner
+                android:layout_toRightOf="@id/pit_setting"
+                android:id="@+id/spinner4"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/robot_edit_bg_pressed"
+                android:layout_centerVertical="true"
+                android:layout_width="60dp"
+                android:layout_height="30dp"
+                android:entries="@array/pit"/>
         </RelativeLayout>
     </LinearLayout>
     </ScrollView>

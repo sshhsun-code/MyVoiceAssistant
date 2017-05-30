@@ -22,12 +22,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.baidu.speech.VoiceRecognitionService;
@@ -41,6 +43,7 @@ import com.example.haizhu.myvoiceassistant.bean.Result;
 import com.example.haizhu.myvoiceassistant.datahandler.ResultsAnalysisManager;
 import com.example.haizhu.myvoiceassistant.datahandler.TruingDataHandler;
 import com.example.haizhu.myvoiceassistant.global.Constant;
+import com.example.haizhu.myvoiceassistant.global.GlobalPref;
 import com.example.haizhu.myvoiceassistant.utils.HttpUtil;
 
 import org.json.JSONArray;
@@ -94,6 +97,13 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     public static final int RECOGNIZE_SUCESS = 1;
     public static final int RECOGNIZE_ERROR = 2;
     public static final int RMSCHANGED = 3;
+
+    private Spinner speacker;
+    private Spinner volume;
+    private Spinner speed;
+    private Spinner pit;
+
+    private static GlobalPref globalPref;
 
     private static SpeechSynthesizer speechSynthesizer;
     private static SpeechSynthesizerListener speechSynthesizerListener;
@@ -153,6 +163,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 
 
     private void iniData() {
+        globalPref = GlobalPref.getInstance();
         TruingDataHandler.setListener(this);
         chatAdapter = new RobotChatAdapter(getApplicationContext(), resultList);
         initListener();
@@ -191,6 +202,82 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 
         left_drawer = findViewById(R.id.left_drawer);
         left_drawer.setOnClickListener(this);
+        speacker = (Spinner) left_drawer.findViewById(R.id.spinner1);
+        volume = (Spinner) left_drawer.findViewById(R.id.spinner2);
+        speed = (Spinner) left_drawer.findViewById(R.id.spinner3);
+        pit = (Spinner) left_drawer.findViewById(R.id.spinner4);
+        speacker.setSelection(globalPref.getInteger("speacker",0));
+        volume.setSelection(globalPref.getInteger("volume",5));
+        speed.setSelection(globalPref.getInteger("speed",5));
+        pit.setSelection(globalPref.getInteger("pit",5));
+        speacker.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                globalPref.putInteger("speacker", position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        volume.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                globalPref.putInteger("volume", position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        speed.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                globalPref.putInteger("speed", position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        pit.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                globalPref.putInteger("pit", position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+//        speacker.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//        });
+//        volume.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//        });
+//        speed.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//        });
+//        pit.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//
+//            }
+//        });
         drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer_layout.addDrawerListener(listener);
 
@@ -648,10 +735,14 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     }
 
     private static void setParams() {
-        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
-        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "5");
-        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
-        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_PITCH, "5");
+        int speacker = globalPref.getInteger("speacker",0);
+        int volume = globalPref.getInteger("volume",5);
+        int speed = globalPref.getInteger("speed",5);
+        int pit = globalPref.getInteger("pit",5);
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, ""+speacker);
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, ""+volume);
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, ""+speed);
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_PITCH, ""+pit);
         speechSynthesizer.setParam(SpeechSynthesizer.PARAM_AUDIO_ENCODE, SpeechSynthesizer.AUDIO_ENCODE_AMR);
         speechSynthesizer.setParam(SpeechSynthesizer.PARAM_AUDIO_RATE, SpeechSynthesizer.AUDIO_BITRATE_AMR_15K85);
 //        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_LANGUAGE, SpeechSynthesizer.LANGUAGE_ZH);
