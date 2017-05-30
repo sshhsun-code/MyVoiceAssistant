@@ -58,14 +58,14 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private ImageView image_keyboard;
 
     private TextView result_show;
-    private ListView id_chat_listView;
+    private static ListView id_chat_listView;
 
     View speechTips;
 
     View speechWave;
 
-    private List<Result> resultList = new ArrayList<>();
-    private RobotChatAdapter chatAdapter;
+    private static List<Result> resultList = new ArrayList<>();
+    private static RobotChatAdapter chatAdapter;
 
     private Handler mhandler;
 
@@ -260,7 +260,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 //        }
 //    }
 
-    private void addChatItem(String msg) {
+    public static void addChatItem(String msg) {
         Result my = new Result();
         my.setType(Result.TYPE_MY);
         my.setText(msg);
@@ -272,7 +272,19 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         }
     }
 
-    private void addChatItem(Result result) {
+    public static void addChatItem(String msg,boolean isFrom) {
+        Result my = new Result();
+        my.setType(Result.TYPE_TEXT);
+        my.setText(msg);
+        resultList.add(my);
+        try {
+            chatAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void addChatItem(Result result) {
         resultList.add(result);
         try {
             chatAdapter.notifyDataSetChanged();

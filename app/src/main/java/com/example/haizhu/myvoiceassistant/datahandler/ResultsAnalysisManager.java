@@ -1,11 +1,20 @@
 package com.example.haizhu.myvoiceassistant.datahandler;
 
+import android.Manifest;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -18,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.internal.LinkedTreeMap;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,6 +41,8 @@ public class ResultsAnalysisManager {
 
     private static Gson gson = new Gson();
     private static final String TAG = ResultsAnalysisManager.class.getSimpleName();
+    private static HandlerCallBack callBack;
+    private static Handler mhandler = new Handler(Looper.getMainLooper());
 
     private static final String[] domains = { //可以识别的本地操作
             "app",
@@ -48,11 +60,12 @@ public class ResultsAnalysisManager {
     public static void analyseResult(String result) {
         mcontext = AssistantApplication.getInstance();
         VoiceBean voiceBean = gson.fromJson(result, VoiceBean.class);
-        Log.d(TAG, "------"+voiceBean);
+        Log.d(TAG, "------" + voiceBean);
         String raw_text = voiceBean.getRaw_text();
         List<BaiduIntent> intentList = voiceBean.getResults();
         if (intentList.size() == 0) {
             //@Todo 直接将raw_text发送图灵机器人并return
+            return;
         }
         BaiduIntent baiduIntent = voiceBean.getResults().get(0);
         String domain = baiduIntent.getDomain();//领域
@@ -60,7 +73,17 @@ public class ResultsAnalysisManager {
         LinkedTreeMap map = (LinkedTreeMap) baiduIntent.getObject();
 
         if (!domainList.isEmpty() && domainList.contains(domain)) {
-            analyseIntent(domain, intent, map); //分析意图，准备离线场景的操作
+            analyseIntent(domain, intent, map, new HandlerCallBack() {
+                @Override
+                public void success() {
+
+                }
+
+                @Override
+                public void error(String error) {
+
+                }
+            }); //分析意图，准备离线场景的操作
         } else {
             //@Todo 直接将raw_text发送图灵机器人并return
         }
@@ -72,27 +95,29 @@ public class ResultsAnalysisManager {
      * @param intent
      * @param map
      */
-    private static void analyseIntent(String domain, String intent, LinkedTreeMap map) {
-        if (domain.equals("setting")) {
+    private static void analyseIntent(String domain, String intent, LinkedTreeMap map,HandlerCallBack callBack) {
+        if (domain.equals("setting")) {  //打开系统设置
             if (!handleSettingIntent(intent, map)) {
-            Intent intent1 = new Intent();
-            intent1.setClassName("com.android.settings", "com.android.settings.Settings");
-            intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            mcontext.startActivity(intent1);
+                Intent intent1 = new Intent();
+                intent1.setClassName("com.android.settings", "com.android.settings.Settings");
+                intent1.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                mcontext.startActivity(intent1);
             }
-        } else if (domain.equals("app")) {
+        } else if (domain.equals("app")) {  //打开应用
             String appName = (String) map.get("appname");
             String pkgName = AppNameUtils.getpkgName(appName);
             if (!TextUtils.isEmpty(pkgName)) {
                 Intent intent1 = common.getAppIntentWithPackageName(mcontext, pkgName);
                 common.startActivity(mcontext, intent1);
             }
-        } else if (domain.equals("telephone")) {
-
-
+        } else if (domain.equals("telephone")) { //打电话
+            String name = (String) map.get("name");
+            getNumberAndCall(name, callBack);
         } else if (domain.equals("message")) {
-
-
+            ArrayList<String> names = (ArrayList<String>) map.get("name");
+            String name = names.get(0);
+            String msgbody = (String) map.get("msgbody");
+            getNumberAndSend(name, msgbody,callBack);
         }
     }
 
@@ -115,21 +140,21 @@ public class ResultsAnalysisManager {
             } else if (settingtype.contains("bluetooth")) {
                 BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                 if (settingtype.equals("bluetooth_on")) { //打开蓝牙
-                    if(!bluetoothAdapter.isEnabled()){
+                    if (!bluetoothAdapter.isEnabled()) {
                         bluetoothAdapter.enable();  //打开蓝牙，需要BLUETOOTH_ADMIN权限
                         String Name = bluetoothAdapter.getName();
                     }
                 } else {  //关闭蓝牙
-                    if(bluetoothAdapter.isEnabled()){
+                    if (bluetoothAdapter.isEnabled()) {
                         bluetoothAdapter.disable();
                     }
                 }
                 return true;
             } else if (settingtype.contains("data")) {
                 if (settingtype.equals("data_on")) { //打开data
-                    setMobileData(mcontext.getApplicationContext(),true);
+                    setMobileData(mcontext.getApplicationContext(), true);
                 } else {  //关闭data
-                    setMobileData(mcontext.getApplicationContext(),false);
+                    setMobileData(mcontext.getApplicationContext(), false);
                 }
                 return true;
             } else {
@@ -158,5 +183,76 @@ public class ResultsAnalysisManager {
             e.printStackTrace();
             System.out.println("移动数据设置错误: " + e.toString());
         }
+    }
+
+    /**
+     * 通过输入获取电话号码
+     */
+    private static void getNumberAndCall(String name ,HandlerCallBack callBack) {
+        //使用ContentResolver查找联系人数据
+        Cursor cursor = mcontext.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        //遍历查询结果，找到所需号码
+        while (cursor.moveToNext()) {
+            //获取联系人ID
+            String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            //获取联系人的名字
+            String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            if (name.equals(contactName)) {
+                //使用ContentResolver查找联系人的电话号码
+                Cursor phone = mcontext.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+                if (phone.moveToNext()) {
+                    String phoneNumber = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phoneNumber));
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    if (ActivityCompat.checkSelfPermission(mcontext, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                        callBack.success();
+                        mcontext.startActivity(intent);
+                        return;
+                    }
+                }
+            }
+        }
+        callBack.error("找不到联系人 :" + name);
+    }
+
+    private static void getNumberAndSend(String name, String msgbody, HandlerCallBack callBack) {
+        //使用ContentResolver查找联系人数据
+        Cursor cursor = mcontext.getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        //遍历查询结果，找到所需号码
+        while (cursor.moveToNext()) {
+            //获取联系人ID
+            String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+            //获取联系人的名字
+            String contactName = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            if (name.equals(contactName)) {
+                //使用ContentResolver查找联系人的电话号码
+                Cursor phone = mcontext.getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = " + contactId, null, null);
+                if (phone.moveToNext()) {
+                    String phoneNumber = phone.getString(phone.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    SmsManager manager = SmsManager.getDefault();
+                    ArrayList<String> list = manager.divideMessage(msgbody);  //因为一条短信有字数限制，因此要将长短信拆分
+                    for(String text:list){
+                        manager.sendTextMessage(phoneNumber, null, text, null, null);
+                    }
+                    callBack.success();
+                    mhandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent SmsIntent = new Intent();
+                            SmsIntent.setClassName("com.android.mms","com.android.mms.ui.ConversationList");
+                            SmsIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            mcontext.startActivity(SmsIntent);
+                        }
+                    },3000);
+                    return;
+                }
+            }
+        }
+        callBack.error("找不到联系人 :" + name);
+    }
+
+    static interface HandlerCallBack {
+        void success();
+        void error(String  error);
     }
 }
