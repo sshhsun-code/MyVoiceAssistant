@@ -81,12 +81,12 @@ public class ResultsAnalysisManager {
             analyseIntent(domain, intent, map, new HandlerCallBack() {
                 @Override
                 public void success() {
-                    RobotChatActivity.addChatItem("好的，马上"+raw_text,true);
+                    RobotChatActivity.addChatItem("好的，正在"+raw_text,true);
                 }
 
                 @Override
                 public void error(String error) {
-                    RobotChatActivity.addChatItem(error,true);
+                    RobotChatActivity.addChatItem(error,false);
                 }
             }); //分析意图，准备离线场景的操作
         } else {

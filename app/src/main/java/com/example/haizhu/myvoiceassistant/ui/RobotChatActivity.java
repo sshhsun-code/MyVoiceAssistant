@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.baidu.speech.VoiceRecognitionService;
+import com.baidu.speechsynthesizer.SpeechSynthesizer;
+import com.baidu.speechsynthesizer.SpeechSynthesizerListener;
+import com.baidu.speechsynthesizer.publicutility.SpeechError;
+import com.example.haizhu.myvoiceassistant.AssistantApplication;
 import com.example.haizhu.myvoiceassistant.R;
 import com.example.haizhu.myvoiceassistant.adapter.RobotChatAdapter;
 import com.example.haizhu.myvoiceassistant.bean.Result;
@@ -90,6 +95,9 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     public static final int RECOGNIZE_ERROR = 2;
     public static final int RMSCHANGED = 3;
 
+    private static SpeechSynthesizer speechSynthesizer;
+    private static SpeechSynthesizerListener speechSynthesizerListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,7 +123,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                         break;
                     case RECOGNIZE_ERROR:
                         String error = (String) msg.obj;
-                        addChatItem(error,true);
+                        addChatItem(error,false);
                         break;
                     case RMSCHANGED:
 
@@ -150,6 +158,11 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         initListener();
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(getApplicationContext(), new ComponentName(this, VoiceRecognitionService.class));
         speechRecognizer.setRecognitionListener(recognitionListener);
+
+        speechSynthesizer = new SpeechSynthesizer(AssistantApplication.getInstance().getApplicationContext(),"holder", speechSynthesizerListener);
+        // 此处需要将setApiKey方法的两个参数替换为你在百度开发者中心注册应用所得到的apiKey和secretKey
+        speechSynthesizer.setApiKey("DnBhRg9PvmNSs0a6OD4BHLAk", "8492ef7b1b435bce2b98e41c1023e67b");
+        speechSynthesizer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
         listener = new DrawerLayout.DrawerListener() {
             @Override
@@ -310,18 +323,13 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         }
     }
 
-//    private void HandleInputMethod(boolean isShow) {
-//        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//        if (isShow) {
-//
-//        } else {
-//            if (imm.isActive())
-//            {
-//                imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,
-//                        InputMethodManager.HIDE_NOT_ALWAYS);
-//            }
-//        }
-//    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        if (id_chat_listView != null && !resultList.isEmpty()) {
+            id_chat_listView.smoothScrollToPosition(resultList.size());
+        }
+    }
 
     public static void addChatItem(String msg) {
         if (msg.isEmpty()) {
@@ -339,7 +347,11 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         }
     }
 
-    public static void addChatItem(String msg,boolean isFrom) {
+    /**
+     * @param msg
+     * @param isSpeak
+     */
+    public static void addChatItem(String msg,boolean isSpeak) {
         if (msg.isEmpty()) {
             return;
         }
@@ -348,6 +360,9 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         my.setText(msg);
         resultList.add(my);
         try {
+            if (isSpeak) {
+                startSpeak(msg);
+            }
             chatAdapter.notifyDataSetChanged();
             id_chat_listView.smoothScrollToPosition(resultList.size());
         } catch (Exception e) {
@@ -358,6 +373,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     public static void addChatItem(Result result) {
         resultList.add(result);
         try {
+            String text = result.getText();
+            startSpeak(text);
             chatAdapter.notifyDataSetChanged();
             id_chat_listView.smoothScrollToPosition(resultList.size());
         } catch (Exception e) {
@@ -549,7 +566,104 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                 }
             }
         };
+
+        speechSynthesizerListener = new SpeechSynthesizerListener() {
+            @Override
+            public void onStartWorking(SpeechSynthesizer speechSynthesizer) {
+
+            }
+
+            @Override
+            public void onSpeechStart(SpeechSynthesizer speechSynthesizer) {
+
+            }
+
+            @Override
+            public void onNewDataArrive(SpeechSynthesizer speechSynthesizer, byte[] bytes, boolean b) {
+
+            }
+
+            @Override
+            public void onBufferProgressChanged(SpeechSynthesizer speechSynthesizer, int i) {
+
+            }
+
+            @Override
+            public void onSpeechProgressChanged(SpeechSynthesizer speechSynthesizer, int i) {
+
+            }
+
+            @Override
+            public void onSpeechPause(SpeechSynthesizer speechSynthesizer) {
+
+            }
+
+            @Override
+            public void onSpeechResume(SpeechSynthesizer speechSynthesizer) {
+
+            }
+
+            @Override
+            public void onCancel(SpeechSynthesizer speechSynthesizer) {
+
+            }
+
+            @Override
+            public void onSynthesizeFinish(SpeechSynthesizer speechSynthesizer) {
+
+            }
+
+            @Override
+            public void onSpeechFinish(SpeechSynthesizer speechSynthesizer) {
+
+            }
+
+            @Override
+            public void onError(SpeechSynthesizer speechSynthesizer, SpeechError speechError) {
+
+            }
+        };
     }
+
+    public static void startSpeak(final String msg) {
+        if(msg.isEmpty()) {
+            return;
+        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setParams();
+                int ret = speechSynthesizer.speak(msg);
+                if (ret != 0) {
+
+                }
+            }
+        }).start();
+    }
+
+    public static void stopSpeak() {
+       if (speechSynthesizer != null) {
+           speechSynthesizer.cancel();
+       }
+    }
+
+    private static void setParams() {
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEAKER, "0");
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_VOLUME, "5");
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_SPEED, "5");
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_PITCH, "5");
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_AUDIO_ENCODE, SpeechSynthesizer.AUDIO_ENCODE_AMR);
+        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_AUDIO_RATE, SpeechSynthesizer.AUDIO_BITRATE_AMR_15K85);
+//        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_LANGUAGE, SpeechSynthesizer.LANGUAGE_ZH);
+//        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_NUM_PRON, "0");
+//        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_ENG_PRON, "0");
+//        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_PUNC, "0");
+//        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_BACKGROUND, "0");
+//        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_STYLE, "0");
+//        speechSynthesizer.setParam(SpeechSynthesizer.PARAM_TERRITORY, "0");
+    }
+
+
 
     private void print(String msg) {
 //        result_show.append(msg + "\n");
