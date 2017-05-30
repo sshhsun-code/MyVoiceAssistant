@@ -33,7 +33,7 @@ public class WebViewActivity extends Activity implements NetStateReceiver.NetSta
     private Handler mhandler;
 
     private ImageView top_back;
-    private String httpUrlStr = "";
+    private String httpUrlStr = "https://www.baidu.com/";
 
     public static final String STR_EXTRA = "str_extra";
 
@@ -43,7 +43,6 @@ public class WebViewActivity extends Activity implements NetStateReceiver.NetSta
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStatusBarTranslate();
-        WebView.enableSlowWholeDocumentDraw();
         setContentView(R.layout.activity_webview_show);
         Intent intent = getIntent();
         if (!TextUtils.isEmpty(intent.getStringExtra(STR_EXTRA)))
@@ -56,6 +55,15 @@ public class WebViewActivity extends Activity implements NetStateReceiver.NetSta
                 super.handleMessage(msg);
                 switch (msg.what) {
                     case 1:
+//                        boolean isHttpUrl = (boolean) msg.obj;
+//                        if (isHttpUrl) {
+//                            WebShow();
+//                        } else {
+//                            Toast.makeText(WebViewActivity.this, "访问链接错误，已帮您跳转到百度",Toast.LENGTH_LONG).show();
+//                            WebShow("https://www.baidu.com/");
+//                        }
+                        break;
+                    case 5:
                         boolean isHttpUrl = (boolean) msg.obj;
                         if (isHttpUrl) {
                             WebShow();
@@ -75,6 +83,15 @@ public class WebViewActivity extends Activity implements NetStateReceiver.NetSta
             }
         });
         mwb = (WebView) findViewById(R.id.webview_show);
+        mwb.clearCache(true);
+        mwb.clearHistory();
+        mwb.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+                return true;
+            }
+        });
 
     }
 
@@ -92,14 +109,17 @@ public class WebViewActivity extends Activity implements NetStateReceiver.NetSta
     private void WebShow(String url) {
         mwb.canZoomIn();
         mwb.canZoomOut();
-        mwb.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        mwb.getSettings().setCacheMode(WebSettings.LOAD_NO_CACHE);
         mwb.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
         mwb.getSettings().setJavaScriptEnabled(true);
+        mwb.getSettings().setBlockNetworkImage(false);
         mwb.loadUrl(url);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mwb.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW); }
         mwb.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                Toast.makeText(WebViewActivity.this, "页面加载完成", Toast.LENGTH_SHORT)
+                Toast.makeText(WebViewActivity.this, "页面加载完成:"+url, Toast.LENGTH_SHORT)
                         .show();
             }
         });
@@ -139,15 +159,14 @@ public class WebViewActivity extends Activity implements NetStateReceiver.NetSta
     }
 
     public void destroyWebView() {
-
         if(mwb != null) {
-            mwb.clearHistory();
+            mwb.setWebChromeClient(null);
+            mwb.setWebViewClient(null);
+            mwb.getSettings().setJavaScriptEnabled(false);
             mwb.clearCache(true);
-            mwb.loadUrl("about:blank"); // clearView() should be changed to loadUrl("about:blank"), since clearView() is deprecated now
-            mwb.freeMemory();
-            mwb.pauseTimers();
-            mwb = null; // Note that mWebView.destroy() and mWebView = null do the exact same thing
+            mwb.removeAllViews();
+            mwb.destroy();
+            mwb = null;
         }
-
     }
 }

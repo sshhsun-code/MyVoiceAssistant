@@ -146,7 +146,7 @@ public class HttpUtil {
                     HttpURLConnection conn=(HttpURLConnection)new URL(url).openConnection();
                     int code=conn.getResponseCode();
                     System.out.println(">>>>>>>>>>>>>>>> "+code+" <<<<<<<<<<<<<<<<<<");
-                    if(code!=200){
+                    if(code!= 200 && code!= 301 ){
                         value=false;
                     }else{
                         value=true;
