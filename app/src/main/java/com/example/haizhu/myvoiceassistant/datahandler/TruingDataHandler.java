@@ -10,6 +10,9 @@ public class TruingDataHandler {
     private static QueryListener listener;
 
     public static void requestTruingAnswer(final String msg) {
+        if (msg == null || msg.isEmpty()) {
+            listener.onDataError("你说什么？");
+        }
         new Thread(new Runnable() {
                 @Override
                 public void run() {

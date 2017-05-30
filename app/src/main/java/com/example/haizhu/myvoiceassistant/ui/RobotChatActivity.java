@@ -58,6 +58,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private ImageView image_keyboard;
 
     private TextView result_show;
+    private TextView robot_top_text;
+    private ImageView image_help;
     private static ListView id_chat_listView;
 
     View speechTips;
@@ -73,6 +75,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     private static SpeechRecognizer speechRecognizer;
 
     private String httpUrl = "";
+
+    private boolean hasShowTips = false;
 
     public static final int RECOGNIZE_SUCESS = 1;
     public static final int RECOGNIZE_ERROR = 2;
@@ -102,7 +106,8 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
 
                         break;
                     case RECOGNIZE_ERROR:
-
+                        String error = (String) msg.obj;
+                        addChatItem(error,true);
                         break;
                     case RMSCHANGED:
 
@@ -154,21 +159,26 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         voice_chat_bottom = (RelativeLayout) findViewById(R.id.voice_chat_bottom);
         image_voice = (TextView) findViewById(R.id.image_voice);
         image_keyboard = (ImageView) findViewById(R.id.image_keyboard);
+        image_help = (ImageView) findViewById(R.id.image_help);
 
         id_chat_listView = (ListView) findViewById(R.id.id_chat_listView);
 
         text_chat_bottom.setVisibility(View.VISIBLE);
         voice_chat_bottom.setVisibility(View.GONE);
 
+        robot_top_text = (TextView) findViewById(R.id.robot_top_text);
         result_show = (TextView) findViewById(R.id.result_show);
+        result_show.setVisibility(View.GONE);
         image_voice_in_text.setOnClickListener(this);
         id_chat_send.setOnClickListener(this);
         id_chat_msg.setOnClickListener(this);
         image_keyboard.setOnClickListener(this);
+        image_help.setOnClickListener(this);
 
         image_voice.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                result_show.setVisibility(View.GONE);
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         speechTips.setVisibility(View.VISIBLE);
@@ -181,7 +191,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                     case MotionEvent.ACTION_UP:
                         speechTips.setVisibility(View.GONE);
                         speechRecognizer.stopListening();
-                        result_show.setText("暂无结果");
+//                        result_show.setText("暂无结果");
                         break;
                 }
                 return true;
@@ -226,6 +236,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         }
         text_chat_bottom.setVisibility(isVoiceShow ? View.GONE : View.VISIBLE);
         voice_chat_bottom.setVisibility(isVoiceShow ? View.VISIBLE : View.GONE);
+        robot_top_text.setText(isVoiceShow ? "语音控制平台" : "智能助手");
     }
 
     @Override
@@ -233,6 +244,12 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
         switch (v.getId()) {
             case R.id.image_voice_in_text:
                 refreshBottomLayout(true);
+                if (!hasShowTips) {
+                    result_show.setVisibility(View.VISIBLE);
+                    resultList.clear();
+                    chatAdapter.notifyDataSetChanged();
+                    hasShowTips = true;
+                }
                 break;
             case R.id.id_chat_send:
                 if (!TextUtils.isEmpty(id_chat_msg.getText())) {
@@ -243,6 +260,11 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
                 break;
             case R.id.image_keyboard:
                 refreshBottomLayout(false);
+                result_show.setVisibility(View.GONE);
+                break;
+            case R.id.image_help:
+                Intent intent = new Intent(RobotChatActivity.this, HelpActivity.class);
+                startActivity(intent);
                 break;
         }
     }
@@ -489,7 +511,7 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     }
 
     private void print(String msg) {
-        result_show.append(msg + "\n");
+//        result_show.append(msg + "\n");
         Log.d("BaiduRecognitioner", "----" + msg);
     }
 

@@ -134,6 +134,10 @@ public class ResultsAnalysisManager {
             }
         } else if (domain.equals("telephone")) { //打电话
             String name = (String) map.get("name");
+            if (name == null || name.isEmpty()) {  //单纯的数字序列不处理，交给图灵
+                String number = (String) map.get("number");
+                TruingDataHandler.requestTruingAnswer(number);
+            }
             getNumberAndCall(name, callBack);
         } else if (domain.equals("message")) {
             ArrayList<String> names = (ArrayList<String>) map.get("name");
