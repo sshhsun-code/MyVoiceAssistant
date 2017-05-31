@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textColor="#778bc2"
-                android:text="小助手"
+                android:text="小欧"
                 android:textSize="18sp" />
         </LinearLayout>
 

@@ -149,11 +149,11 @@
             android:visibility="visible"
             android:paddingRight="2dp"
             android:layout_height="wrap_content"
-            android:textSize="25sp"
+            android:textSize="29sp"
             android:layout_marginTop="10dp"
             android:padding="5dp"
             android:gravity="center_horizontal"
-            android:textColor="#000"
+            android:textColor="#2c2c2c"
             android:text="你好！\n 需要什么帮助吗"
             android:layout_below="@id/robot_chat_title"/>
     </RelativeLayout>

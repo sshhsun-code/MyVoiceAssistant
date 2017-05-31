@@ -341,6 +341,13 @@ public class RobotChatActivity extends Activity implements View.OnClickListener,
     protected void onResume() {
         super.onResume();
         id_chat_listView.setAdapter(chatAdapter);
+        refreshBottomLayout(true);
+        if (!hasShowTips) {
+            result_show.setVisibility(View.VISIBLE);
+            resultList.clear();
+            chatAdapter.notifyDataSetChanged();
+            hasShowTips = true;
+        }
     }
 
     @Override

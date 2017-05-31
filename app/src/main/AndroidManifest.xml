@@ -34,7 +34,7 @@
         <meta-data android:name="com.baidu.speech.SECRET_KEY" android:value="8492ef7b1b435bce2b98e41c1023e67b"/>
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.SplashActivity"
             android:label="@string/app_name_cn"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -42,6 +42,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:label="@string/app_name_cn"
+            android:theme="@style/AppTheme.NoActionBar">
+
         </activity>
 
         <receiver android:name=".receiver.NetStateReceiver">
