@@ -5,7 +5,7 @@ import android.app.Application;
 import com.example.haizhu.myvoiceassistant.utils.AppNameUtils;
 
 /**
- * Created by sshunsun on 2017/5/22.
+ * Created by sshunsun on 2017/5/22. TEST
  */
 public class AssistantApplication extends Application {
 
